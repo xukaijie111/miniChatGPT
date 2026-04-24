@@ -1,6 +1,12 @@
-# miniTransformer
+# miniTransformer - Transformer 教学项目
 
-一个用于学习 Transformer 原理的教学项目，用排序任务演示 Encoder-only 和 Decoder-only 两种架构。
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red.svg)](https://pytorch.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+一个用于学习 Transformer 原理的教学项目，用排序任务演示 Encoder-only (BERT) 和 Decoder-only (GPT) 两种架构。
+
+**关键词**: Transformer, GPT, BERT, Self-Attention, Causal Mask, 自回归生成, PyTorch 教学项目, 深度学习入门
 
 ## 项目概述
 
@@ -241,3 +247,22 @@ pip install torch
 ## License
 
 MIT
+
+---
+
+## 🔍 关于本项目
+
+本项目适合：
+- 深度学习初学者理解 Transformer 原理
+- 想要了解 Encoder-only 和 Decoder-only 区别的人
+- PyTorch 实践者
+- NLP 入门学习
+
+**为什么用排序任务？**
+排序任务足够简单，能快速验证模型是否正确学习；同时又足够复杂，需要模型理解序列的全局信息。是学习 Transformer 的理想入门任务。
+
+**项目特点**：
+- 📚 详细代码注释，每行都有解释
+- 📊 架构图可视化，直观理解模型结构
+- 🎯 100% 测试正确率，验证模型有效性
+- 🔬 对比两种架构，深入理解设计差异
