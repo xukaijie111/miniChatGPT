@@ -240,9 +240,10 @@ pip install torch
 
 ## 参考资料
 
-- [Transformer 原论文](https://arxiv.org/abs/1706.03762)
-- [GPT 原论文](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
-- [The Illustrated Transformer](http://jalammar.github.io/illustrated-transformer/)
+- [minGPT](https://github.com/karpathy/minGPT) - Karpathy 的极简 GPT 实现，本项目 Decoder 部分参考了该项目的结构
+- [Transformer 原论文](https://arxiv.org/abs/1706.03762) - Attention Is All You Need
+- [GPT 原论文](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) - Language Models are Unsupervised Multitask Learners
+- [The Illustrated Transformer](http://jalammar.github.io/illustrated-transformer/) - Transformer 可视化讲解
 
 ## License
 
