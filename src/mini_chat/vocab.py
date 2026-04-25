@@ -45,7 +45,7 @@ class BertVocab:
         print(f"UNK索引: {self.UNK_IDX}")
         print(f"EOS索引: {self.EOS_IDX}")
 
-    def encode(self, text):
+    def encode(self, text, max_len=None):
         """
         编码：文本 → 索引列表
 
@@ -54,7 +54,14 @@ class BertVocab:
 
         add_special_tokens=False: 不自动添加[CLS]和[SEP]
         """
-        return self.tokenizer.encode(text, add_special_tokens=False)
+        if max_len is None:
+            return self.tokenizer.encode(text, add_special_tokens=False)
+        return self.tokenizer.encode(
+            text,
+            add_special_tokens=False,
+            truncation=True,
+            max_length=max_len,
+        )
 
     def decode(self, indices):
         """

@@ -9,6 +9,7 @@
 """
 import sys
 import os
+import argparse
 sys.path.append(os.path.join(os.path.dirname(__file__), "../decoder_only"))
 
 import torch
@@ -16,33 +17,41 @@ from model import SortDecoderTransformer
 from vocab import BertVocab
 
 
-# ============ 参数配置（和训练时一致）============
-VOCAB_SIZE = 21128
-D_MODEL = 64
-N_LAYERS = 2
-N_HEADS = 2
-MAX_LEN = 64
-MAX_GEN_LEN = 32  # 最大续写长度
+BASE_DIR = os.path.dirname(__file__)
+DEFAULT_MODEL_PATH = os.path.join(BASE_DIR, "mini_chat_model.pth")
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="mini_chat 文本续写测试")
+    parser.add_argument("--model-path", default=DEFAULT_MODEL_PATH, help="模型权重路径")
+    parser.add_argument("--max-len", type=int, default=256, help="训练时使用的最大长度")
+    parser.add_argument("--d-model", type=int, default=64, help="隐藏维度")
+    parser.add_argument("--n-layers", type=int, default=2, help="Transformer 层数")
+    parser.add_argument("--n-heads", type=int, default=2, help="注意力头数")
+    parser.add_argument("--max-gen-len", type=int, default=32, help="最大续写长度")
+    return parser.parse_args()
 
 # ============ 加载模型 ============
 print("加载词表...")
 vocab = BertVocab()
+VOCAB_SIZE = len(vocab)
+args = parse_args()
 
 print("加载模型...")
 model = SortDecoderTransformer(
     vocab_size=VOCAB_SIZE,
-    d_model=D_MODEL,
-    n_layers=N_LAYERS,
-    n_heads=N_HEADS,
-    max_len=MAX_LEN
+    d_model=args.d_model,
+    n_layers=args.n_layers,
+    n_heads=args.n_heads,
+    max_len=args.max_len,
 )
 
-model.load_state_dict(torch.load("mini_chat_model.pth"))
+model.load_state_dict(torch.load(args.model_path, map_location="cpu"))
 model.eval()
 print("模型加载成功！\n")
 
 
-def generate(model, text, max_new_tokens=MAX_GEN_LEN):
+def generate(model, text, max_new_tokens):
     """
     自回归续写文本
 
@@ -67,7 +76,9 @@ def generate(model, text, max_new_tokens=MAX_GEN_LEN):
     with torch.no_grad():
         for _ in range(max_new_tokens):
             # 输入模型
-            logits = model(generated.unsqueeze(0))
+            # 只保留最后 max_len 个 token，避免超过位置编码长度
+            context = generated[-args.max_len :]
+            logits = model(context.unsqueeze(0))
 
             # 取最后位置的logits，预测下一个字
             next_token_logits = logits[0, -1, :]
@@ -107,7 +118,7 @@ def chat():
             continue
 
         # 续写文本
-        result = generate(model, user_input)
+        result = generate(model, user_input, max_new_tokens=args.max_gen_len)
         print(f"续写: {result}")
 
 
