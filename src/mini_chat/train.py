@@ -31,6 +31,10 @@ VALID_DATA_PATH = os.getenv(
     "VALID_DATA_PATH",
     os.path.abspath(os.path.join(BASE_DIR, "../dataset/lccc_base_valid.jsonl.gz")),
 )
+TEST_DATA_PATH = os.getenv(
+    "TEST_DATA_PATH",
+    os.path.abspath(os.path.join(BASE_DIR, "../dataset/lccc_base_test.jsonl.gz")),
+)
 SAVE_PATH = os.getenv("SAVE_PATH", os.path.join(BASE_DIR, "mini_chat_model.pth"))
 
 MAX_LEN = int(os.getenv("MAX_LEN", "256"))
@@ -46,6 +50,46 @@ VAL_MAX_SAMPLES = int(os.getenv("VAL_MAX_SAMPLES", "20000"))
 PATIENCE = int(os.getenv("PATIENCE", "3"))
 MIN_DELTA = float(os.getenv("MIN_DELTA", "1e-4"))
 DEVICE = os.getenv("DEVICE", "cuda" if torch.cuda.is_available() else "cpu")
+
+
+def ensure_dataset_files():
+    """检查训练/验证数据是否存在，不存在时给出下载指引。"""
+    missing = []
+    if not os.path.exists(TRAIN_DATA_PATH):
+        missing.append(("TRAIN_DATA_PATH", TRAIN_DATA_PATH))
+    if not os.path.exists(VALID_DATA_PATH):
+        missing.append(("VALID_DATA_PATH", VALID_DATA_PATH))
+    if not os.path.exists(TEST_DATA_PATH):
+        missing.append(("TEST_DATA_PATH", TEST_DATA_PATH))
+
+    if not missing:
+        return
+
+    print("\n===== 数据集缺失 =====")
+    for env_name, path in missing:
+        print(f"- {env_name} 不存在: {path}")
+
+    print("\n请先下载 LCCC base 数据集文件：")
+    print("- train: https://hf-mirror.com/datasets/silver/lccc/resolve/main/lccc_base_train.jsonl.gz")
+    print("- valid: https://hf-mirror.com/datasets/silver/lccc/resolve/main/lccc_base_valid.jsonl.gz")
+    print("- test : https://hf-mirror.com/datasets/silver/lccc/resolve/main/lccc_base_test.jsonl.gz")
+    print("\n推荐直接运行下载脚本：")
+    print("python src/mini_chat/download_lccc.py")
+    print("\n如果你在 mini_chat 目录下：")
+    print("python download_lccc.py")
+    print("\n示例（Linux/DSW）:")
+    print("mkdir -p src/dataset")
+    print("wget -O src/dataset/lccc_base_train.jsonl.gz https://hf-mirror.com/datasets/silver/lccc/resolve/main/lccc_base_train.jsonl.gz")
+    print("wget -O src/dataset/lccc_base_valid.jsonl.gz https://hf-mirror.com/datasets/silver/lccc/resolve/main/lccc_base_valid.jsonl.gz")
+    print("wget -O src/dataset/lccc_base_test.jsonl.gz https://hf-mirror.com/datasets/silver/lccc/resolve/main/lccc_base_test.jsonl.gz")
+    print("\n或通过环境变量指定已有数据路径：")
+    print("export TRAIN_DATA_PATH=/your/path/lccc_base_train.jsonl.gz")
+    print("export VALID_DATA_PATH=/your/path/lccc_base_valid.jsonl.gz")
+    print("export TEST_DATA_PATH=/your/path/lccc_base_test.jsonl.gz")
+    raise FileNotFoundError("缺少训练所需数据集文件，请按上方提示下载后重试。")
+
+
+ensure_dataset_files()
 
 # ============ 加载词表 ============
 print("\n===== 加载词表 =====")
